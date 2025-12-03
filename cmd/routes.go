@@ -4,12 +4,13 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func routes() *chi.Mux {
+func (app *application) routes() *chi.Mux {
 	mux := chi.NewRouter()
 
-	mux.Get("/", home)
-	mux.Get("/blogs", blogs)
-	mux.Get("/blogs/{id}", blogView)
+	mux.Get("/", app.home)
+	mux.Get("/blogs", app.allView)
+	mux.Get("/blogs/{id}", app.singleView)
+	mux.Post("/blogs/create", app.blogCreate)
 
 	return mux
 }

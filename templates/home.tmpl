@@ -1,0 +1,45 @@
+{{/* templates/home.tmpl - homepage content block */}}
+{{define "content"}}
+<section class="hero">
+  <div class="hero-left">
+    <h1>Welcome to MyBlog</h1>
+    <p class="lead">A tiny blog platform to test handlers, DB and templates.</p>
+    <p><a class="btn" href="/posts/new">Create Post</a></p>
+  </div>
+
+  <aside class="hero-right card highlight">
+    <h3>Quick stats</h3>
+    <p><strong>{{with .Stats.TotalPosts}}{{.}}{{else}}0{{end}}</strong> posts • <strong>{{with .Stats.Authors}}{{.}}{{else}}0{{end}}</strong> authors</p>
+  </aside>
+</section>
+
+<section class="latest">
+  <h2>Latest posts</h2>
+
+  {{if .Latest}}
+    <ul class="post-list">
+      {{range .Latest}}
+      <li class="post-card">
+        <a class="post-link" href="/posts/{{.ID}}">
+          <div class="post-meta">
+            <h3 class="post-title">{{.Title}}</h3>
+            <time datetime="{{.CreatedAt.Format "2006-01-02"}}">{{.CreatedAt.Format "2006-01-02"}}</time>
+          </div>
+          <p class="post-excerpt">{{if .Excerpt}}{{.Excerpt}}{{else}}{{.Content}}{{end}}</p>
+        </a>
+        <div class="post-footer">
+          <span class="author">by {{.Author}}</span>
+          {{if .Tags}}
+            <div class="tags">
+              {{range .Tags}}<span class="tag">{{.}}</span>{{end}}
+            </div>
+          {{end}}
+        </div>
+      </li>
+      {{end}}
+    </ul>
+  {{else}}
+    <p>No posts yet — <a href="/posts/new">create the first post</a>.</p>
+  {{end}}
+</section>
+{{end}}

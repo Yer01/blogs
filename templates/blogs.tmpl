@@ -1,0 +1,36 @@
+{{/* templates/blogs.tmpl - list all posts */}}
+{{define "content"}}
+<section class="posts-header">
+  <div class="row space-between">
+    <h2>All posts</h2>
+    <form class="search-form" method="get" action="/posts">
+      <input name="term" value="{{.Term}}" placeholder="Search title, content or category" aria-label="Search posts">
+      <button class="btn small" type="submit">Search</button>
+    </form>
+  </div>
+</section>
+
+{{if .Posts}}
+  <div class="grid">
+    {{range .Posts}}
+      <article class="card post-card-grid">
+        <div class="card-body">
+          <a class="post-link" href="/posts/{{.ID}}">
+            <h3 class="post-title">{{.Title}}</h3>
+            <p class="post-excerpt">{{if .Excerpt}}{{.Excerpt}}{{else}}{{.Content}}{{end}}</p>
+          </a>
+          <div class="meta small muted">
+            <span>{{.Category}}</span> • <span>by {{.Author}}</span> • <time datetime="{{.CreatedAt.Format "2006-01-02"}}">{{.CreatedAt.Format "2006-01-02"}}</time>
+          </div>
+          <div class="card-actions">
+            <a class="link" href="/posts/{{.ID}}">Read</a>
+            <a class="link" href="/posts/{{.ID}}/edit">Edit</a>
+          </div>
+        </div>
+      </article>
+    {{end}}
+  </div>
+{{else}}
+  <p>No posts found. Try a different search or <a href="/posts/new">create one</a>.</p>
+{{end}}
+{{end}}

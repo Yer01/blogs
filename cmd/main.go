@@ -7,14 +7,19 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/Yer01/internal/model"
 	_ "github.com/lib/pq"
 )
 
+type application struct {
+	blogs *model.BlogModel
+}
+
 func main() {
-	router := routes()
+
 	logger := log.Default()
 
-	connStr := "postgres://postgres:moura9300@localhost/blogproject?sslmode=verify-full"
+	connStr := "postgres://myuser:moura9300@localhost:5432/blogproject?sslmode=disable"
 
 	db, err := sql.Open("postgres", connStr)
 
@@ -23,6 +28,12 @@ func main() {
 		os.Exit(1)
 	}
 	defer db.Close()
+
+	app := &application{
+		blogs: &model.BlogModel{DB: db},
+	}
+
+	router := app.routes()
 
 	logger.Print("starting server on port 8081...")
 	if err := http.ListenAndServe("localhost:8081", router); err != nil {
