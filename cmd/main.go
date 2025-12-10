@@ -19,7 +19,7 @@ func main() {
 
 	logger := log.Default()
 
-	connStr := "postgres://myuser:moura9300@localhost:5432/blogproject?sslmode=disable"
+	connStr := os.Getenv("DATABASE_URL")
 
 	db, err := sql.Open("postgres", connStr)
 
