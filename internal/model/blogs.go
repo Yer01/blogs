@@ -75,3 +75,35 @@ func (m *BlogModel) GetAll() ([]Blog, error) {
 	}
 	return blogs, nil
 }
+
+func (m *BlogModel) Update(id int, content string) (int, error) {
+	quer := `UPDATE blogs SET content = $1 WHERE blog_id = $2
+             RETURNING blog_id`
+
+	var updatedID int
+	err := m.DB.QueryRow(quer, content, id).Scan(&updatedID)
+	if err != nil {
+		return -1, err
+	}
+
+	return updatedID, nil
+}
+
+func (m *BlogModel) Delete(id int) error {
+	quer := "DELETE FROM blogs WHERE blog_id = $1"
+
+	res, err := m.DB.Exec(quer, id)
+
+	if err != nil {
+		return err
+	}
+
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rows == 0 {
+		return sql.ErrNoRows
+	}
+	return nil
+}

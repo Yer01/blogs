@@ -3,34 +3,33 @@
 <section class="posts-header">
   <div class="row space-between">
     <h2>All posts</h2>
-    <form class="search-form" method="get" action="/posts">
-      <input name="term" value="{{.Term}}" placeholder="Search title, content or category" aria-label="Search posts">
-      <button class="btn small" type="submit">Search</button>
-    </form>
+    <a class="btn" href="/blogs/create">Create New Post</a>
   </div>
 </section>
 
-{{if .Posts}}
+{{if .Blogs}}
   <div class="grid">
-    {{range .Posts}}
+    {{range .Blogs}}
       <article class="card post-card-grid">
         <div class="card-body">
-          <a class="post-link" href="/posts/{{.ID}}">
-            <h3 class="post-title">{{.Title}}</h3>
-            <p class="post-excerpt">{{if .Excerpt}}{{.Excerpt}}{{else}}{{.Content}}{{end}}</p>
+          <a class="post-link" href="/blogs/{{.ID}}">
+            <h3 class="post-title">{{.Name}}</h3>
+            <p class="post-excerpt">{{.Content}}</p>
           </a>
           <div class="meta small muted">
-            <span>{{.Category}}</span> • <span>by {{.Author}}</span> • <time datetime="{{.CreatedAt.Format "2006-01-02"}}">{{.CreatedAt.Format "2006-01-02"}}</time>
+            <time datetime="{{.Created.Format "2006-01-02"}}">{{.Created.Format "Jan 02, 2006"}}</time>
+            {{if ne (.Created.Format "2006-01-02") (.Updated.Format "2006-01-02")}}
+              • Updated: {{.Updated.Format "Jan 02, 2006"}}
+            {{end}}
           </div>
           <div class="card-actions">
-            <a class="link" href="/posts/{{.ID}}">Read</a>
-            <a class="link" href="/posts/{{.ID}}/edit">Edit</a>
+            <a class="link" href="/blogs/{{.ID}}">Read</a>
           </div>
         </div>
       </article>
     {{end}}
   </div>
 {{else}}
-  <p>No posts found. Try a different search or <a href="/posts/new">create one</a>.</p>
+  <p>No posts found. <a href="/blogs/create">Create the first one</a>.</p>
 {{end}}
 {{end}}

@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/Yer01/internal/model"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -19,7 +20,13 @@ func main() {
 
 	logger := log.Default()
 
-	connStr := "postgres://myuser:moura9300@localhost:5432/blogproject?sslmode=disable"
+	err := godotenv.Load()
+
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
+	connStr := os.Getenv("DATABASE_URL")
 
 	db, err := sql.Open("postgres", connStr)
 

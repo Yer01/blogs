@@ -1,35 +1,23 @@
-{{/* templates/blog.tmpl - single post view; expects .Post */}}
+{{/* templates/blog.tmpl - single post view; expects .Blog */}}
 {{define "content"}}
 <article class="single-post">
   <header class="post-header">
-    <h1>{{.Post.Title}}</h1>
+    <h1>{{.Blog.Name}}</h1>
     <div class="meta muted">
-      <span class="category">{{.Post.Category}}</span> •
-      <span class="author">by {{.Post.Author}}</span> •
-      <time datetime="{{.Post.CreatedAt.Format "2006-01-02T15:04:05Z07:00"}}">{{.Post.CreatedAt.Format "2006-01-02 15:04"}}</time>
+      <span>Created: <time datetime="{{.Blog.Created.Format "2006-01-02T15:04:05Z07:00"}}">{{.Blog.Created.Format "Jan 02, 2006 15:04"}}</time></span>
+      {{if ne (.Blog.Created.Format "2006-01-02 15:04") (.Blog.Updated.Format "2006-01-02 15:04")}}
+        • <span>Updated: <time datetime="{{.Blog.Updated.Format "2006-01-02T15:04:05Z07:00"}}">{{.Blog.Updated.Format "Jan 02, 2006 15:04"}}</time></span>
+      {{end}}
     </div>
   </header>
 
   <div class="post-body">
-    {{if .Post.ContentHTML}}
-      {{.Post.ContentHTML}}
-    {{else}}
-      <p>{{.Post.Content}}</p>
-    {{end}}
+    <p>{{.Blog.Content}}</p>
   </div>
 
-  {{if .Post.Tags}}
-    <div class="tags-row">
-      {{range .Post.Tags}}<span class="tag">{{.}}</span>{{end}}
-    </div>
-  {{end}}
-
   <div class="post-actions">
-    <a class="btn" href="/posts">← Back to posts</a>
-    <a class="btn secondary" href="/posts/{{.Post.ID}}/edit">Edit</a>
-    <form method="post" action="/posts/{{.Post.ID}}/delete" class="inline-form" onsubmit="return confirm('Delete this post?');">
-      <button class="btn danger" type="submit">Delete</button>
-    </form>
+    <a class="btn" href="/blogs">← Back to all posts</a>
+    <a class="btn secondary" href="/">Home</a>
   </div>
 </article>
 {{end}}
