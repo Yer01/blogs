@@ -2,17 +2,16 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"html/template"
 	"net/http"
 )
 
-func render(w http.ResponseWriter, tmpl template.Template) {
+func render(w http.ResponseWriter, tmpl *template.Template, data templateData) {
 	buf := new(bytes.Buffer)
 
-	err := tmpl.ExecuteTemplate(buf, "base", nil)
-	if err != nil {
-		fmt.Println(err.Error())
+	if err := tmpl.ExecuteTemplate(w, "base", data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	buf.WriteTo(w)

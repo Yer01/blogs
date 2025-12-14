@@ -7,15 +7,32 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles("templates/base.tmpl")
+
+	t, err := template.ParseFiles("templates/base.tmpl", "templates/home.tmpl")
+
 	if err != nil {
-		fmt.Println(err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	blogs, err := app.blogs.GetAll()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	render(w, *tmpl)
+
+	data := templateData{
+		Title:      "Welcome",
+		Year:       time.Now().Year(),
+		Blogs:      blogs,
+		TotalPosts: len(blogs),
+	}
+
+	render(w, t, data)
+
 	fmt.Fprintf(w, "homepage")
 }
 

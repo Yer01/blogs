@@ -1,11 +1,15 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/go-chi/chi/v5"
 )
 
 func (app *application) routes() *chi.Mux {
 	mux := chi.NewRouter()
+
+	mux.Handle("/static/*", http.StripPrefix("/static", http.FileServer(http.Dir("./static"))))
 
 	mux.Get("/", app.home)
 	mux.Get("/blogs", app.allView)
