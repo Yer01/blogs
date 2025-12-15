@@ -88,19 +88,6 @@ func (app *application) singleView(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) blogCreate(w http.ResponseWriter, r *http.Request) {
-
-	t, err := template.ParseFiles("templates/base.tmpl", "templates/create.tmpl")
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-
-	data := templateData{
-		Title: "Create Blog",
-		Year:  time.Now().Year(),
-	}
-	render(w, t, data)
-
 	name := r.FormValue("name")
 	content := r.FormValue("content")
 	if name == "" || content == "" {
@@ -114,6 +101,22 @@ func (app *application) blogCreate(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Printf("Created successfully under id: %d\n", res)
 	//http.Redirect(w, r, fmt.Sprintf("/blogs/%d", res), http.StatusSeeOther)
+}
+
+func (app *application) blogCreateView(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("templates/base.tmpl", "templates/create.tmpl")
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := templateData{
+		Title: "Create blog",
+		Year:  time.Now().Year(),
+	}
+
+	render(w, t, data)
 }
 
 func (app *application) blogUpdate(w http.ResponseWriter, r *http.Request) {
