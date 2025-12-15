@@ -16,6 +16,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	blogs, err := app.blogs.GetAll()
@@ -43,10 +44,29 @@ func (app *application) allView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(res)
+
+	t, err := template.ParseFiles("templates/base.tmpl", "templates/blogs.tmpl")
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := templateData{
+		Title:      "All blogs",
+		Year:       time.Now().Year(),
+		Blogs:      res,
+		TotalPosts: len(res),
+	}
+
+	render(w, t, data)
+
+	/* err = json.NewEncoder(w).Encode(res)
 	if err != nil {
 		log.Printf("encode response err: %v", err)
 	}
+	*/
+
 }
 
 func (app *application) singleView(w http.ResponseWriter, r *http.Request) {
