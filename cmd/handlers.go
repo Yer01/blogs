@@ -1,10 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -43,7 +41,6 @@ func (app *application) allView(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
 
 	t, err := template.ParseFiles("templates/base.tmpl", "templates/blogs.tmpl")
 
@@ -61,12 +58,6 @@ func (app *application) allView(w http.ResponseWriter, r *http.Request) {
 
 	render(w, t, data)
 
-	/* err = json.NewEncoder(w).Encode(res)
-	if err != nil {
-		log.Printf("encode response err: %v", err)
-	}
-	*/
-
 }
 
 func (app *application) singleView(w http.ResponseWriter, r *http.Request) {
@@ -81,15 +72,35 @@ func (app *application) singleView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	err = json.NewEncoder(w).Encode(res)
+	t, err := template.ParseFiles("templates/base.tmpl", "templates/blog.tmpl")
+
 	if err != nil {
-		log.Printf("encode response err: %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+
+	data := templateData{
+		Title:      fmt.Sprintf("Blog %d", id),
+		Year:       time.Now().Year(),
+		Blog:       &res,
+		TotalPosts: 1,
+	}
+	render(w, t, data)
 }
 
 func (app *application) blogCreate(w http.ResponseWriter, r *http.Request) {
+
+	t, err := template.ParseFiles("templates/base.tmpl", "templates/create.tmpl")
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	data := templateData{
+		Title: "Create Blog",
+		Year:  time.Now().Year(),
+	}
+	render(w, t, data)
+
 	name := r.FormValue("name")
 	content := r.FormValue("content")
 	if name == "" || content == "" {
@@ -100,6 +111,7 @@ func (app *application) blogCreate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Duplicate blog name", http.StatusConflict)
 		return
 	}
+
 	fmt.Printf("Created successfully under id: %d\n", res)
 	//http.Redirect(w, r, fmt.Sprintf("/blogs/%d", res), http.StatusSeeOther)
 }
