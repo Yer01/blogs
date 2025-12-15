@@ -31,8 +31,6 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	}
 
 	render(w, t, data)
-
-	fmt.Fprintf(w, "homepage")
 }
 
 func (app *application) allView(w http.ResponseWriter, r *http.Request) {
@@ -76,6 +74,7 @@ func (app *application) singleView(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	data := templateData{
@@ -92,6 +91,7 @@ func (app *application) blogCreate(w http.ResponseWriter, r *http.Request) {
 	content := r.FormValue("content")
 	if name == "" || content == "" {
 		http.Error(w, "Missing fields", http.StatusConflict)
+		return
 	}
 	res, err := app.blogs.Insert(name, content)
 	if err != nil {
@@ -100,7 +100,7 @@ func (app *application) blogCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Printf("Created successfully under id: %d\n", res)
-	//http.Redirect(w, r, fmt.Sprintf("/blogs/%d", res), http.StatusSeeOther)
+	http.Redirect(w, r, fmt.Sprintf("/blogs/%d", res), http.StatusSeeOther)
 }
 
 func (app *application) blogCreateView(w http.ResponseWriter, r *http.Request) {
@@ -135,6 +135,36 @@ func (app *application) blogUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Printf("Blog with id %d updated succesfully!\n", res)
+}
+
+func (app *application) blogUpdateView(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.PathValue("id"))
+
+	if err != nil {
+		http.NotFound(w, r)
+	}
+
+	blog, err := app.blogs.Get(id)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusConflict)
+		return
+	}
+
+	t, err := template.ParseFiles("templates/base.tmpl", "templates/edit.tmpl")
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := templateData{
+		Title: "Create blog",
+		Year:  time.Now().Year(),
+		Blog:  &blog,
+	}
+
+	render(w, t, data)
 }
 
 func (app *application) blogDelete(w http.ResponseWriter, r *http.Request) {
