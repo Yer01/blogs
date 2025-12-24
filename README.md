@@ -2,6 +2,8 @@
 
 A Go-based personal blog application with authentication, article management, and responsive design. Built with Go, PostgreSQL, and HTML templates.
 
+**Project**: [roadmap.sh - Personal Blog](https://roadmap.sh/projects/personal-blog)
+
 ## Screenshots
 
 ### Guest Section
