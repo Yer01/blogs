@@ -10,7 +10,7 @@ import (
 func (app *application) routes() *chi.Mux {
 	mux := chi.NewRouter()
 
-	authH := AuthHandler{
+	authH := &AuthHandler{
 		Username: os.Getenv("AUTH_USERNAME"),
 		Password: os.Getenv("AUTH_PASSWORD"),
 	}

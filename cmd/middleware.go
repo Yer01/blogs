@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/sha256"
+	"log"
 	"net/http"
 )
 
@@ -24,6 +25,7 @@ func (auth *AuthHandler) auth(next http.HandlerFunc) http.HandlerFunc {
 				return
 			}
 		}
+		log.Println("Authentication failed")
 		w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 	}
